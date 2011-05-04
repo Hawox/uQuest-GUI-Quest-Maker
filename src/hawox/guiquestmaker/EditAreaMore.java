@@ -30,11 +30,18 @@ public class EditAreaMore extends JPanel{
 		rewardType.getLabel().setForeground(textColor);
 		title = new JLabel("None");
 		title.setForeground(textColor);
-		setType(EditAreaMore.TYPE_OBJECTIVE);
+//		setType(EditAreaMore.TYPE_OBJECTIVE);
 
 		this.setVisible(true);
 		this.validate();
 		this.repaint();
+	}
+	
+	public void setUpObjective(Objective obj){
+		setType(TYPE_OBJECTIVE);
+	}
+	public void setUpReward(Reward r){
+		setType(TYPE_REWARD);
 	}
 	
 	public void setType(int type){
@@ -47,7 +54,7 @@ public class EditAreaMore extends JPanel{
 			this.add(objType);
 			this.setTitle("Objective");
 		}else
-		if(type == EditAreaMore.TYPE_OBJECTIVE){
+		if(type == EditAreaMore.TYPE_REWARD){
 			this.add(rewardType);
 			this.setTitle("Reward");
 		}
