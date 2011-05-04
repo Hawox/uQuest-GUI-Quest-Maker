@@ -1,8 +1,11 @@
 package hawox.guiquestmaker;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -17,6 +20,15 @@ public class EditAreaMore extends JPanel{
 	JLabel title;
 	NameComboBoxPanel objType;
 	NameComboBoxPanel rewardType;
+	NameTextPanel objID;
+	NameTextPanel objDisplay;
+	NameTextPanel amount;
+	
+	//the reward or objective. Referenced as an object so it can be either.
+	Object savedInfo;
+	
+	
+	JButton doneButton;
 	
 	Color textColor = new Color(255,255,255);
 	
@@ -30,7 +42,17 @@ public class EditAreaMore extends JPanel{
 		rewardType.getLabel().setForeground(textColor);
 		title = new JLabel("None");
 		title.setForeground(textColor);
+		doneButton = new JButton("Done Editing");
+		doneButton.addActionListener(new DoneButtonListener());
 //		setType(EditAreaMore.TYPE_OBJECTIVE);
+		
+		objID = new NameTextPanel("Objective ID", backgroundColor);
+		objID.getLabel().setForeground(textColor);
+		objDisplay = new NameTextPanel("Display Name", backgroundColor);
+		objDisplay.getLabel().setForeground(textColor);
+		amount = new NameTextPanel("Amount", backgroundColor);
+		amount.getLabel().setForeground(textColor);
+
 
 		this.setVisible(true);
 		this.validate();
@@ -38,7 +60,24 @@ public class EditAreaMore extends JPanel{
 	}
 	
 	public void setUpObjective(Objective obj){
+		this.savedInfo = obj;
+		this.removeAll();
 		setType(TYPE_OBJECTIVE);
+		this.add(objType);
+		objType.getComboBox().setSelectedItem(obj.getType());
+		//gather is setup differently
+		if(obj.getType().equalsIgnoreCase("gather")){
+			
+		}else{
+			//everything else shares the same nodes
+			this.add(objID);
+			this.add(objDisplay);
+			this.add(amount);
+		}
+		
+		this.add(doneButton);
+		this.validate();
+		this.repaint();
 	}
 	public void setUpReward(Reward r){
 		setType(TYPE_REWARD);
@@ -51,7 +90,6 @@ public class EditAreaMore extends JPanel{
 			this.setTitle("None");
 		}else
 		if(type == EditAreaMore.TYPE_OBJECTIVE){
-			this.add(objType);
 			this.setTitle("Objective");
 		}else
 		if(type == EditAreaMore.TYPE_REWARD){
@@ -61,6 +99,12 @@ public class EditAreaMore extends JPanel{
 		
 		this.validate();
 		this.repaint();
+	}
+	
+	public class DoneButtonListener implements ActionListener{
+		public void actionPerformed(ActionEvent event){
+			
+		}
 	}
 
 	

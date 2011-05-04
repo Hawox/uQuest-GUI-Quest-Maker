@@ -22,7 +22,7 @@ public class Objective {
 	
 	//What the combobox sees
 	public String toString(){
-		return this.type;
+		return this.display;
 	}
 	
 	public String getType() {
