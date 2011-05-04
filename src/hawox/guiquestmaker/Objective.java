@@ -4,12 +4,12 @@ public class Objective {
 	String type;
 	String display;
 	String id;
-	int amount;
+	String amount;
 	
 	//only used for a gather quest
 	Item item;
 	
-	Objective(String type, String display, String id, int amount){
+	Objective(String type, String display, String id, String amount){
 		this.type = type;
 		this.display = display;
 		this.id = id;
@@ -43,10 +43,10 @@ public class Objective {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public int getAmount() {
+	public String getAmount() {
 		return amount;
 	}
-	public void setAmount(int amount) {
+	public void setAmount(String amount) {
 		this.amount = amount;
 	}
 	public Item getItem() {

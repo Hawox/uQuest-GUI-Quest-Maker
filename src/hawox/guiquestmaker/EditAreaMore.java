@@ -14,8 +14,9 @@ public class EditAreaMore extends JPanel{
 	static final int TYPE_NONE = 0;
 	static final int TYPE_OBJECTIVE = 1;
 	static final int TYPE_REWARD = 2;
+	GUI gui;
 
-	String[] objectiveTypes = {"None", "Gather Blocks/Items", "Destroy Blocks", "Punch Blocks", "Place Blocks", "Kill Creatures", "Move"};
+	String[] objectiveTypes = {"None", "Gather", "Block_Destroy", "Block_Damage", "Block_Place", "Kill", "Move"};
 	String[] rewardTypes = {"Money", "Item"};
 	JLabel title;
 	NameComboBoxPanel objType;
@@ -25,14 +26,15 @@ public class EditAreaMore extends JPanel{
 	NameTextPanel amount;
 	
 	//the reward or objective. Referenced as an object so it can be either.
-	Object savedInfo;
+	StoredInfo savedInfo;
 	
 	
 	JButton doneButton;
 	
 	Color textColor = new Color(255,255,255);
 	
-	EditAreaMore(Color backgroundColor){
+	EditAreaMore(Color backgroundColor,GUI gui){
+		this.gui = gui;
 		this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		backgroundColor = new Color(0,0,0);
 		this.setBackground(backgroundColor);
@@ -59,10 +61,9 @@ public class EditAreaMore extends JPanel{
 		this.repaint();
 	}
 	
-	public void setUpObjective(Objective obj){
-		this.savedInfo = obj;
-		this.removeAll();
+	public void setUpObjective(Objective obj, int arrayID){
 		setType(TYPE_OBJECTIVE);
+		this.savedInfo = new StoredInfo(1,arrayID,obj);
 		this.add(objType);
 		objType.getComboBox().setSelectedItem(obj.getType());
 		//gather is setup differently
@@ -84,6 +85,8 @@ public class EditAreaMore extends JPanel{
 	}
 	
 	public void setType(int type){
+		//Clean up info from past edits
+		this.savedInfo = null;
 		this.removeAll();
 		this.add(title);
 		if(type == EditAreaMore.TYPE_NONE){
@@ -103,7 +106,41 @@ public class EditAreaMore extends JPanel{
 	
 	public class DoneButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent event){
-			
+			if(savedInfo.type == StoredInfo.OBJECTIVE){
+				Objective obj = (Objective) savedInfo.storedObject;
+				//gather is different from the others
+				if(obj.getType().equalsIgnoreCase("gather")){
+					
+				}else{
+					obj.setType((String)objType.getComboBox().getSelectedItem());
+					obj.setAmount(amount.getText().getText());
+					obj.setDisplay(objDisplay.getText().getText());
+					obj.setId(objID.getText().getText());
+					gui.getObjectives().set(savedInfo.id, obj);
+				}
+			}
+			setType(EditAreaMore.TYPE_NONE);
+		}
+	}
+	/*	NameTextPanel objID;
+	NameTextPanel objDisplay;
+	NameTextPanel amount;*/
+	
+	//Where we'll store the object we are editing
+	public class StoredInfo{
+		//Where?
+		static final int OBJECTIVE = 1;
+		static final int REWARD = 2;
+		int type;
+		
+		Object storedObject;
+		
+		//what array id?
+		int id;
+		StoredInfo(int type, int array, Object obj){
+			this.type = type;
+			this.id = array;
+			this.storedObject = obj;
 		}
 	}
 

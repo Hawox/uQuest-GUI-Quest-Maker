@@ -34,7 +34,7 @@ public class NameBoxWithButton extends NameComboBoxPanel{
 
 	public class addButtonListenerObjective implements ActionListener{
 		public void actionPerformed(ActionEvent event){
-			gui.getObjectives().add(new Objective("Kill","Things Killed","kill_any", 1));
+			gui.getObjectives().add(new Objective("Kill","Things Killed","kill_any", "1"));
 			gui.updateTheArrays();
 		}
 	}
@@ -47,7 +47,7 @@ public class NameBoxWithButton extends NameComboBoxPanel{
 		public void actionPerformed(ActionEvent event){
 			if( getComboBox().getSelectedItem() instanceof Objective ){
 				Objective obj = (Objective) getComboBox().getSelectedItem();
-				gui.getEditAreaMore().setUpObjective(obj);
+				gui.getEditAreaMore().setUpObjective(obj,getComboBox().getSelectedIndex());
 			}else
 			if( getComboBox().getSelectedItem() instanceof Reward ){
 				Reward r = (Reward) getComboBox().getSelectedItem();

@@ -51,7 +51,7 @@ public class GUI {
 //		objectives[0] = new Objective("Kill","Pigs Killed","Pig",1);
 //		rewards[0] = new Reward("Money", 10);
 //		this.updateTheArrays();
-		this.getObjectives().add(new Objective("Kill","Things Killed","kill_any", 1));
+		this.getObjectives().add(new Objective("Kill","Things Killed","kill_any", "1"));
 		
 		editArea = new DrawPanel();
 		editArea.setLayout(new BoxLayout(editArea,  BoxLayout.Y_AXIS));
@@ -64,7 +64,7 @@ public class GUI {
 //			addReward = new JButton("Add Reward");
 			objectivesPanel = new NameBoxWithButton("Objectives:", objectives.toArray(), editArea.getBackground(), "Add Objective", 0,this);
 			rewardsPanel = new NameBoxWithButton("Rewards:", rewards.toArray(), editArea.getBackground(), "Add Reward", 1,this);
-			editAreaMore = new EditAreaMore(editArea.getBackground());
+			editAreaMore = new EditAreaMore(editArea.getBackground(),this);
 			editArea.add(questName);
 			editArea.add(startInfo);
 			editArea.add(finishInfo);
@@ -107,7 +107,37 @@ public class GUI {
 			output += "\n  Start_Info: " + startInfo.getText().getText();
 			output += "\n  Finish_Info: " + finishInfo.getText().getText();
 			output += "\n  Rewards: ";
+			for(Reward r : getRewards()){
+				if(r.getType().equalsIgnoreCase("money")){
+					output+="\n    Money: " + r.getAmount();
+				}else
+				if(r.getType().equalsIgnoreCase("item")){
+					output+="\n    Item:";
+					output+="\n      Item_ID: " + r.getItem().id;
+					output+="\n      Display_Name: " + r.getItem().display;
+					output+="\n      Amount: " + r.getItem().amount;
+					output+="\n      Durability: " + r.getItem().durability;
+				}
+			}
 			output += "\n  Objectives: ";
+			int count = 0;
+			for(Objective obj : getObjectives()){
+				output += "\n    " + count + ":";
+				if(obj.getType().equalsIgnoreCase("gather")){
+					output+="\n      Type: Gather";
+					output+="\n      Item:";
+					output+="\n        Item_ID: " + obj.getItem().id;
+					output+="\n        Display_Name: " + obj.getItem().display;
+					output+="\n        Amount: " + obj.getItem().amount;
+					output+="\n        Durability: " + obj.getItem().durability;
+				}else{
+					output+="\n      Type: " + obj.getType();
+					output+="\n      Display_Name: " + obj.getDisplay();
+					output+="\n      Objective_ID: " + obj.getId();
+					output+="\n      Amount: " + obj.getAmount();
+				}
+				count++;
+			}
 
 			questTextArea.getText().setText(output);
 		}
