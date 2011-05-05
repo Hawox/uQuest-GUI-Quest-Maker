@@ -19,11 +19,26 @@ public class EditAreaMore extends JPanel{
 	String[] objectiveTypes = {"None", "Gather", "Block_Destroy", "Block_Damage", "Block_Place", "Kill", "Move"};
 	String[] rewardTypes = {"Money", "Item"};
 	JLabel title;
+	//objectives
 	NameComboBoxPanel objType;
-	NameComboBoxPanel rewardType;
 	NameTextPanel objID;
 	NameTextPanel objDisplay;
+	
+	//rewards
+	NameComboBoxPanel rewardType;
+	
+	//shared
 	NameTextPanel amount;
+	
+	
+	
+	
+	//item stuff, I want to convert some of these to comboboxs someday
+	NameTextPanel itemAmount;
+	NameTextPanel itemID;
+	NameTextPanel itemDisplayName;
+	NameTextPanel itemDurability;
+
 	
 	//the reward or objective. Referenced as an object so it can be either.
 	StoredInfo savedInfo;
@@ -48,6 +63,16 @@ public class EditAreaMore extends JPanel{
 		doneButton.addActionListener(new DoneButtonListener());
 //		setType(EditAreaMore.TYPE_OBJECTIVE);
 		
+		itemID = new NameTextPanel("Item ID", backgroundColor);
+		itemID.getLabel().setForeground(textColor);
+		itemAmount = new NameTextPanel("Item Amount", backgroundColor);
+		itemAmount.getLabel().setForeground(textColor);
+		itemDisplayName = new NameTextPanel("Item Display Name", backgroundColor);
+		itemDisplayName.getLabel().setForeground(textColor);
+		itemDurability = new NameTextPanel("Item Durability", backgroundColor);
+		itemDurability.getLabel().setForeground(textColor);
+		
+		
 		objID = new NameTextPanel("Objective ID", backgroundColor);
 		objID.getLabel().setForeground(textColor);
 		objDisplay = new NameTextPanel("Display Name", backgroundColor);
@@ -55,7 +80,12 @@ public class EditAreaMore extends JPanel{
 		amount = new NameTextPanel("Amount", backgroundColor);
 		amount.getLabel().setForeground(textColor);
 
+		/*	NameTextPanel itemAmount;
+		NameTextPanel itemID;
+		NameTextPanel itemDisplayName;
+		NameTextPanel itemDurability;*/
 
+		this.setType(TYPE_NONE);
 		this.setVisible(true);
 		this.validate();
 		this.repaint();
@@ -68,9 +98,23 @@ public class EditAreaMore extends JPanel{
 		objType.getComboBox().setSelectedItem(obj.getType());
 		//gather is setup differently
 		if(obj.getType().equalsIgnoreCase("gather")){
-			
+			try{
+			itemAmount.getText().setText(obj.getItem().amount);
+			itemID.getText().setText(obj.getItem().id);
+			itemDisplayName.getText().setText(obj.getItem().display);
+			itemDurability.getText().setText(obj.getItem().durability);
+			}catch(NullPointerException npe){
+				//changed to a gather quest so these will be broken. I'll find a fix for this later.
+			}
+			this.add(itemID);
+			this.add(itemDisplayName);
+			this.add(itemAmount);
+			this.add(itemDurability);
 		}else{
 			//everything else shares the same nodes
+			objID.getText().setText(obj.getId());
+			objDisplay.getText().setText(obj.getDisplay());
+			amount.getText().setText(obj.getAmount());
 			this.add(objID);
 			this.add(objDisplay);
 			this.add(amount);
@@ -80,8 +124,33 @@ public class EditAreaMore extends JPanel{
 		this.validate();
 		this.repaint();
 	}
-	public void setUpReward(Reward r){
+	public void setUpReward(Reward r, int arrayID){
 		setType(TYPE_REWARD);
+		this.savedInfo = new StoredInfo(1,arrayID,r);
+		this.add(rewardType);
+		rewardType.getComboBox().setSelectedItem(r.getType());
+		if(r.getType().equalsIgnoreCase("money")){
+			amount.getText().setText(r.getAmount());
+			this.add(amount);
+		}else{
+			//item
+			try{
+				itemAmount.getText().setText(r.getItem().amount);
+				itemID.getText().setText(r.getItem().id);
+				itemDisplayName.getText().setText(r.getItem().display);
+				itemDurability.getText().setText(r.getItem().durability);
+			}catch(NullPointerException npe){
+				//changed to an item reward so these will be broken. I'll find a fix for this later.
+			}
+			this.add(itemID);
+			this.add(itemDisplayName);
+			this.add(itemAmount);
+			this.add(itemDurability);
+		}
+		this.add(doneButton);
+		this.validate();
+		this.repaint();
+
 	}
 	
 	public void setType(int type){
@@ -96,7 +165,6 @@ public class EditAreaMore extends JPanel{
 			this.setTitle("Objective");
 		}else
 		if(type == EditAreaMore.TYPE_REWARD){
-			this.add(rewardType);
 			this.setTitle("Reward");
 		}
 		
@@ -110,7 +178,15 @@ public class EditAreaMore extends JPanel{
 				Objective obj = (Objective) savedInfo.storedObject;
 				//gather is different from the others
 				if(obj.getType().equalsIgnoreCase("gather")){
-					
+					try{
+						Item theItem = new Item(itemID.getText().getText(),itemDisplayName.getText().getText(),itemAmount.getText().getText(),itemDurability.getText().getText());
+						obj.setDisplay(itemDisplayName.getText().getText());
+						obj.setItem(theItem);
+						gui.getObjectives().set(savedInfo.id, obj);
+					}catch(NullPointerException npe){
+						//Don't save it because it was converted to a gather from something. Find a fix for this later.
+					}
+
 				}else{
 					obj.setType((String)objType.getComboBox().getSelectedItem());
 					obj.setAmount(amount.getText().getText());
@@ -122,9 +198,6 @@ public class EditAreaMore extends JPanel{
 			setType(EditAreaMore.TYPE_NONE);
 		}
 	}
-	/*	NameTextPanel objID;
-	NameTextPanel objDisplay;
-	NameTextPanel amount;*/
 	
 	//Where we'll store the object we are editing
 	public class StoredInfo{

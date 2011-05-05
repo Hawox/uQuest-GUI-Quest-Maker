@@ -51,7 +51,7 @@ public class NameBoxWithButton extends NameComboBoxPanel{
 			}else
 			if( getComboBox().getSelectedItem() instanceof Reward ){
 				Reward r = (Reward) getComboBox().getSelectedItem();
-				gui.getEditAreaMore().setUpReward(r);
+				gui.getEditAreaMore().setUpReward(r,getComboBox().getSelectedIndex());
 			}
 		}
 	}

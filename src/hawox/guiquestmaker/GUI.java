@@ -51,6 +51,7 @@ public class GUI {
 //		objectives[0] = new Objective("Kill","Pigs Killed","Pig",1);
 //		rewards[0] = new Reward("Money", 10);
 //		this.updateTheArrays();
+		this.getRewards().add(new Reward("money","10"));
 		this.getObjectives().add(new Objective("Kill","Things Killed","kill_any", "1"));
 		
 		editArea = new DrawPanel();
@@ -93,6 +94,7 @@ public class GUI {
 	
 		frame.validate();
 		frame.repaint();
+		frame.setVisible(true);
 	}
 	
 	public class ClearAllButtonListener implements ActionListener{

@@ -4,7 +4,7 @@ public class Reward {
 	String type;
 	
 	//for money
-	int amount;
+	String amount;
 	
 	//item
 	Item item;
@@ -14,7 +14,7 @@ public class Reward {
 		this.item = item;
 	}
 	
-	Reward(String type, int amount){
+	Reward(String type, String amount){
 		this.type = type;
 		this.amount = amount;
 	}
@@ -32,11 +32,11 @@ public class Reward {
 		this.type = type;
 	}
 
-	public int getAmount() {
+	public String getAmount() {
 		return amount;
 	}
 
-	public void setAmount(int amount) {
+	public void setAmount(String amount) {
 		this.amount = amount;
 	}
 

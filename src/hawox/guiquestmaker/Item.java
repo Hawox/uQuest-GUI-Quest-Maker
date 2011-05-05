@@ -1,12 +1,12 @@
 package hawox.guiquestmaker;
 
 public class Item {
-	int id;
+	String id;
 	String display;
-	int amount;
-	int durability;
+	String amount;
+	String durability;
 	
-	Item(int id, String display, int amount, int durability){
+	Item(String id, String display, String amount, String durability){
 		this.display = display;
 		this.id = id;
 		this.amount = amount;
