@@ -61,6 +61,8 @@ public class EditAreaMore extends JPanel{
 		title.setForeground(textColor);
 		doneButton = new JButton("Done Editing");
 		doneButton.addActionListener(new DoneButtonListener());
+//		objType.getComboBox().addActionListener(new ComboBoxListener());
+//		rewardType.getComboBox().addActionListener(new ComboBoxListener());
 //		setType(EditAreaMore.TYPE_OBJECTIVE);
 		
 		itemID = new NameTextPanel("Item ID", backgroundColor);
@@ -80,10 +82,6 @@ public class EditAreaMore extends JPanel{
 		amount = new NameTextPanel("Amount", backgroundColor);
 		amount.getLabel().setForeground(textColor);
 
-		/*	NameTextPanel itemAmount;
-		NameTextPanel itemID;
-		NameTextPanel itemDisplayName;
-		NameTextPanel itemDurability;*/
 
 		this.setType(TYPE_NONE);
 		this.setVisible(true);
@@ -99,10 +97,10 @@ public class EditAreaMore extends JPanel{
 		//gather is setup differently
 		if(obj.getType().equalsIgnoreCase("gather")){
 			try{
-			itemAmount.getText().setText(obj.getItem().amount);
-			itemID.getText().setText(obj.getItem().id);
-			itemDisplayName.getText().setText(obj.getItem().display);
-			itemDurability.getText().setText(obj.getItem().durability);
+				itemAmount.getText().setText(obj.getItem().amount);
+				itemID.getText().setText(obj.getItem().id);
+				itemDisplayName.getText().setText(obj.getItem().display);
+				itemDurability.getText().setText(obj.getItem().durability);
 			}catch(NullPointerException npe){
 				//changed to a gather quest so these will be broken. I'll find a fix for this later.
 			}
@@ -126,13 +124,14 @@ public class EditAreaMore extends JPanel{
 	}
 	public void setUpReward(Reward r, int arrayID){
 		setType(TYPE_REWARD);
-		this.savedInfo = new StoredInfo(1,arrayID,r);
+		this.savedInfo = new StoredInfo(2,arrayID,r);
 		this.add(rewardType);
 		rewardType.getComboBox().setSelectedItem(r.getType());
 		if(r.getType().equalsIgnoreCase("money")){
 			amount.getText().setText(r.getAmount());
 			this.add(amount);
-		}else{
+		}else
+		if(r.getType().equalsIgnoreCase("item")){
 			//item
 			try{
 				itemAmount.getText().setText(r.getItem().amount);
@@ -146,7 +145,7 @@ public class EditAreaMore extends JPanel{
 			this.add(itemDisplayName);
 			this.add(itemAmount);
 			this.add(itemDurability);
-		}
+		} 
 		this.add(doneButton);
 		this.validate();
 		this.repaint();
@@ -176,6 +175,7 @@ public class EditAreaMore extends JPanel{
 		public void actionPerformed(ActionEvent event){
 			if(savedInfo.type == StoredInfo.OBJECTIVE){
 				Objective obj = (Objective) savedInfo.storedObject;
+				obj.setType((String)objType.getComboBox().getSelectedItem());
 				//gather is different from the others
 				if(obj.getType().equalsIgnoreCase("gather")){
 					try{
@@ -188,16 +188,46 @@ public class EditAreaMore extends JPanel{
 					}
 
 				}else{
-					obj.setType((String)objType.getComboBox().getSelectedItem());
 					obj.setAmount(amount.getText().getText());
 					obj.setDisplay(objDisplay.getText().getText());
 					obj.setId(objID.getText().getText());
 					gui.getObjectives().set(savedInfo.id, obj);
 				}
+			}else
+			if(savedInfo.type == StoredInfo.REWARD){
+				Reward r = (Reward) savedInfo.storedObject;
+				r.setType((String)rewardType.getComboBox().getSelectedItem());
+				if(r.getType().equalsIgnoreCase("money")){
+					r.setAmount(amount.getText().getText());
+					gui.getRewards().set(savedInfo.id, r);
+				}else
+				if(r.getType().equalsIgnoreCase("item")){
+					try{
+						Item theItem = new Item(itemID.getText().getText(),itemDisplayName.getText().getText(),itemAmount.getText().getText(),itemDurability.getText().getText());
+						r.setItem(theItem);
+						gui.getRewards().set(savedInfo.id, r);
+					}catch(NullPointerException npe){
+						//Don't save it because it was converted to a item from something. Find a fix for this later.
+					}
+				}
+			
 			}
+			gui.updateTheArrays();
 			setType(EditAreaMore.TYPE_NONE);
 		}
 	}
+	
+	/* This might be running when the edit area is made... Causing issues with it's creating. Disabled for now... 
+	  public class ComboBoxListener implements ActionListener{
+	    public void actionPerformed(ActionEvent e) {
+	    	if(savedInfo.storedObject instanceof Reward){
+	    		setUpObjective((Objective) savedInfo.storedObject,savedInfo.id);
+	    	}else
+	    	if(savedInfo.storedObject instanceof Object){
+	    		setUpReward((Reward) savedInfo.storedObject,savedInfo.id);
+	    	}
+	    }
+	}*/
 	
 	//Where we'll store the object we are editing
 	public class StoredInfo{

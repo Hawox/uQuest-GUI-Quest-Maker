@@ -1,12 +1,14 @@
 package hawox.guiquestmaker;
 
 
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -14,6 +16,11 @@ import javax.swing.JPanel;
 
 public class GUI {
 	
+	//applet stuff
+	public boolean app = false;
+	AppletLauncher appFrame;
+	
+	//Elements
 	JFrame frame;
 	DrawPanel editArea;
 		NameTextPanel questName;
@@ -37,15 +44,25 @@ public class GUI {
 		//Make the frame
 		frame = new JFrame("uQuest Quest Maker");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(800,600);
+		frame.setVisible(true);
 		
 		startUpGui(false);
 	}
 	
+	//Initial setup if we're using an applet!
+	public void go(AppletLauncher jframe){
+		appFrame = jframe;
+		app = true;
+		
+		startUpGui(true);
+	}
+	
 	
 	public void startUpGui(Boolean usingApplet){
-		//Make the frame
-		frame.setSize(800,600);
-		frame.setVisible(true);
+		//added in again so it clears with the clear button! =D
+		rewards = new ArrayList<Reward>();
+		objectives = new ArrayList<Objective>();
 		
 		//add in a blank obj and reward to stop nulls
 //		objectives[0] = new Objective("Kill","Pigs Killed","Pig",1);
@@ -82,7 +99,6 @@ public class GUI {
 			
 		questTextArea = new QuestTextArea(editArea.getBackground());
 	
-	
 		//listeners
 		clearAllButton.addActionListener(new ClearAllButtonListener());
 		compileButton.addActionListener(new CompileButtonListener());
@@ -91,15 +107,22 @@ public class GUI {
 		frame.getContentPane().add(BorderLayout.NORTH, toolBar);
 		frame.getContentPane().add(BorderLayout.CENTER, editArea);
 		frame.getContentPane().add(BorderLayout.EAST, questTextArea);
-	
-		frame.validate();
-		frame.repaint();
 		frame.setVisible(true);
+		
+		//Add to our appframe instead
+		if(app){
+			appFrame.getContentPane().add(BorderLayout.NORTH, toolBar);
+			appFrame.getContentPane().add(BorderLayout.CENTER, editArea);
+			appFrame.getContentPane().add(BorderLayout.EAST, questTextArea);
+			appFrame.setVisible(true);
+		}
+		update();
 	}
 	
 	public class ClearAllButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent event){
-			
+			//Damn it's not that simple. Validating the frame is not enough... :< I'll fix this later. It's okay for a test build.
+			startUpGui(false);
 		}
 	}
 	public class CompileButtonListener implements ActionListener{
@@ -140,13 +163,22 @@ public class GUI {
 				}
 				count++;
 			}
-
+			output += "\n  Extras: ";
+			
 			questTextArea.getText().setText(output);
 		}
 	}
 	
 	
-	
+	public void update(){
+		if(app){
+			appFrame.validate();
+			appFrame.repaint();
+		}else{
+			frame.validate();
+			frame.repaint();
+		}
+	}
 	
 	
 	//keeps objectives and rewards arrays aligned
@@ -159,6 +191,12 @@ public class GUI {
 //		objectivesPanel.validate();
 //		objectivesPanel.repaint();
 //		this.questTextArea.getText().setText(objectives.toString());
+		 //subComboBox.setModel( new DefaultComboBoxModel( (String[])o ) );
+		 objectivesPanel.getComboBox().setModel( new DefaultComboBoxModel( objectives.toArray() ));
+		 rewardsPanel.getComboBox().setModel( new DefaultComboBoxModel( rewards.toArray() ));
+		 
+		 //repaint our frames just in case
+		 update();
 	}
 
 

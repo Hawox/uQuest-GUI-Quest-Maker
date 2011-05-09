@@ -40,7 +40,9 @@ public class NameBoxWithButton extends NameComboBoxPanel{
 	}
 	public class addButtonListenerReward implements ActionListener{
 		public void actionPerformed(ActionEvent event){
-			
+			Item item = new Item("3","1","Dirt","0");
+			gui.getRewards().add(new Reward("Item", item));
+			gui.updateTheArrays();
 		}
 	}
 	public class editButtonListener implements ActionListener{
@@ -51,6 +53,7 @@ public class NameBoxWithButton extends NameComboBoxPanel{
 			}else
 			if( getComboBox().getSelectedItem() instanceof Reward ){
 				Reward r = (Reward) getComboBox().getSelectedItem();
+				gui.getQuestTextArea().getText().setText(r.getType());
 				gui.getEditAreaMore().setUpReward(r,getComboBox().getSelectedIndex());
 			}
 		}
